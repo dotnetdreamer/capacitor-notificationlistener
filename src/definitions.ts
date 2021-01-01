@@ -83,8 +83,7 @@ export class SystemNotificationListener {
   requestPermission() : Promise<void> {
     return NotificationListenerPlugin.requestPermission();
   }
-  isListening (
-  ) : Promise<boolean> {
+  isListening () : Promise<boolean> {
     return new Promise<boolean>((resolve : any, reject : any) => {
       NotificationListenerPlugin.isListening().then((value : {value : boolean}) => {
         resolve(value.value);
@@ -92,5 +91,10 @@ export class SystemNotificationListener {
         reject(reason);
       });
     })
+  }
+
+  setBlackListPackages(args: { blackListOfPackages: string[] })
+    : Promise<void> {
+      return NotificationListenerPlugin.setBlackListPackages(args);
   }
 }

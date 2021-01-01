@@ -81,7 +81,7 @@ public class NotificationListenerPlugin extends Plugin {
             call.success();
         } catch (Exception e) {
             Log.e(TAG, "Error");
-            call.reject();
+            call.reject(e.getLocalizedMessage());
         }
     }
 
