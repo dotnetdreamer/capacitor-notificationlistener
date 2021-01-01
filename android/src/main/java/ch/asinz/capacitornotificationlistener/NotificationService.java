@@ -6,17 +6,15 @@ import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
-import com.getcapacitor.JSObject;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
 
 public class NotificationService extends NotificationListenerService {
     public static final String ACTION_RECEIVE      = "ch.asinz.P8WatchApp.NOTIFICATION_RECEIVE_EVENT";
     public static final String ACTION_REMOVE      = "ch.asinz.P8WatchApp.NOTIFICATION_REMOVE_EVENT";
 
+    public static final String ARG_KEY= "notification_event_key";
     public static final String ARG_PACKAGE = "notification_event_package";
     public static final String ARG_TITLE = "notification_event_title";
     public static final String ARG_APPTITLE = "notification_event_apptitle";
@@ -25,7 +23,7 @@ public class NotificationService extends NotificationListenerService {
     public static final String ARG_TIME = " notification_event_time";
 
     public static boolean isConnected = false;
-
+    public static List<String> blackListOfPackages;
     private static final String TAG = NotificationService.class.getSimpleName();
 
     @Override
@@ -54,6 +52,9 @@ public class NotificationService extends NotificationListenerService {
         Intent i = new Intent(action);
         Notification n = sbn.getNotification();
 
+        String k = sbn.getKey();
+        i.putExtra(ARG_KEY, k);
+
         CharSequence pkg =  sbn.getPackageName();
         i.putExtra(ARG_PACKAGE, charSequenceToString(pkg));
 
@@ -71,6 +72,13 @@ public class NotificationService extends NotificationListenerService {
 
         i.putExtra(ARG_TIME, n.when);
 
+        //Don't bubble up...
+        //blackListOfPackages = Arrays.asList(new String[] { "com.microsoft.office.outlook" });
+        if(blackListOfPackages != null) {
+            if (NotificationService.blackListOfPackages.contains(pkg)) {
+                this.cancelNotification(k);
+            }
+        }
         return i;
     }
 

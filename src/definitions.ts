@@ -37,6 +37,7 @@ interface NotificationListenerPluginPlugin extends Plugin {
   stopListening(): Promise<void>;
   requestPermission(): Promise<void>;
   isListening(): Promise< { value: boolean } >;
+  setBlackListPackages(args: { blackListOfPackages: string[] }): Promise<void>;
 }
 
 // ----- 

@@ -16,7 +16,11 @@ import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Arrays;
+import java.util.List;
 
 @NativePlugin(
         permissions = {
@@ -68,11 +72,25 @@ public class NotificationListenerPlugin extends Plugin {
         call.success();
     }
 
+    @PluginMethod()
+    public void setBlackListPackages(PluginCall call) {
+        JSArray arr = call.getArray("blackListOfPackages");
+        try {
+            List<String> list = arr.toList();
+            NotificationService.blackListOfPackages = list;
+            call.success();
+        } catch (Exception e) {
+            Log.e(TAG, "Error");
+            call.reject();
+        }
+    }
+
     private class NotificationReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             JSObject jo = new JSObject();
             try {
+                jo.put("key", intent.getStringExtra(NotificationService.ARG_KEY));
                 jo.put("apptitle", intent.getStringExtra(NotificationService.ARG_APPTITLE));
                 jo.put("text", intent.getStringExtra(NotificationService.ARG_TEXT));
                 JSONArray ja = new JSONArray();
