@@ -6,9 +6,16 @@ import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
+import com.getcapacitor.JSArray;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class NotificationService extends NotificationListenerService {
     public static final String ACTION_RECEIVE      = "ch.asinz.P8WatchApp.NOTIFICATION_RECEIVE_EVENT";
@@ -24,6 +31,7 @@ public class NotificationService extends NotificationListenerService {
 
     public static boolean isConnected = false;
     public static List<String> blackListOfPackages;
+    public static JSArray blackListOfText;
     private static final String TAG = NotificationService.class.getSimpleName();
 
     @Override
@@ -62,20 +70,45 @@ public class NotificationService extends NotificationListenerService {
         i.putExtra(ARG_TITLE, charSequenceToString(title));
 
         CharSequence text =  n.extras.getCharSequence("android.text");
-        i.putExtra(ARG_TEXT, charSequenceToString(text));
+        String txtStr = charSequenceToString(text);
+        i.putExtra(ARG_TEXT, txtStr);
 
         CharSequence[] textlines =  n.extras.getCharSequenceArray("android.textLines");
-        i.putExtra(ARG_TEXTLINES, charSequenceArrayToStringArray(textlines));
+        String[] textlinesStr = charSequenceArrayToStringArray(textlines);
+        i.putExtra(ARG_TEXTLINES, textlinesStr);
 
         CharSequence apptitle  = n.extras.getCharSequence("android.title");
-        i.putExtra(ARG_APPTITLE, charSequenceToString(apptitle));
+        String titleStr = charSequenceToString(apptitle);
+        i.putExtra(ARG_APPTITLE, titleStr);
 
         i.putExtra(ARG_TIME, n.when);
 
         //Don't bubble up...
         //blackListOfPackages = Arrays.asList(new String[] { "com.microsoft.office.outlook" });
-        if(blackListOfPackages != null) {
-            if (NotificationService.blackListOfPackages.contains(pkg)) {
+        if(NotificationService.blackListOfPackages != null
+                && NotificationService.blackListOfPackages.contains(pkg)) {
+            this.cancelNotification(k);
+        }
+
+        if(NotificationService.blackListOfText != null) {
+            boolean found = false;
+            for (int j = 0; j < NotificationService.blackListOfText.length(); j++) {
+                try {
+                    JSONObject item = NotificationService.blackListOfText.getJSONObject(j);
+                    String rule = item.getString("rule");
+                    String value = item.getString("value");
+                    if(rule == "contains" && txtStr.contains(value)) {
+                        found = true;
+                        break;
+                    } else if(rule == "startsWith" && txtStr.startsWith(value)) {
+                        found = true;
+                        break;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(found) {
                 this.cancelNotification(k);
             }
         }

@@ -21,6 +21,7 @@ import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @NativePlugin(
         permissions = {
@@ -73,11 +74,24 @@ public class NotificationListenerPlugin extends Plugin {
     }
 
     @PluginMethod()
-    public void setBlackListPackages(PluginCall call) {
-        JSArray arr = call.getArray("blackListOfPackages");
+    public void setBlackList(PluginCall call) {
+        JSArray bpArray = call.getArray("blackListOfPackages");
+        JSArray bpTxtArray = call.getArray("blackListOfText");
+
+        if(bpArray == null && bpTxtArray == null) {
+            call.reject("You must set blackListOfPackages or blackListOfText");
+            return;
+        }
+
         try {
-            List<String> list = arr.toList();
-            NotificationService.blackListOfPackages = list;
+            if(bpArray != null) {
+                List<String> bpList = bpArray.toList();
+                NotificationService.blackListOfPackages = bpList;
+            }
+
+            if(bpTxtArray != null) {
+                NotificationService.blackListOfText = bpTxtArray;
+            }
             call.success();
         } catch (Exception e) {
             Log.e(TAG, "Error");
