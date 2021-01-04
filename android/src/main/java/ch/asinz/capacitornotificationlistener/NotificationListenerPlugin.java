@@ -65,6 +65,9 @@ public class NotificationListenerPlugin extends Plugin {
 
     @PluginMethod()
     public void stopListening(PluginCall call) {
+        NotificationService.blackListOfText = null;
+        NotificationService.blackListOfPackages = null;
+
         if (notificationreceiver == null) {
             call.success();
             return;
@@ -100,6 +103,11 @@ public class NotificationListenerPlugin extends Plugin {
     }
 
     private class NotificationReceiver extends BroadcastReceiver {
+        NotificationReceiver() {
+            NotificationService.blackListOfText = null;
+            NotificationService.blackListOfPackages = null;
+        }
+
         @Override
         public void onReceive(Context context, Intent intent) {
             JSObject jo = new JSObject();
