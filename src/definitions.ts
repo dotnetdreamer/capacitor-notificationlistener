@@ -36,7 +36,8 @@ interface NotificationListenerPluginPlugin extends Plugin {
   startListening(): Promise<void>;
   stopListening(): Promise<void>;
   requestPermission(): Promise<void>;
-  isListening(): Promise< { value: boolean } >;
+  isListening(): Promise<{ value: boolean }>;
+  hasPermission(): Promise<{ value: boolean }>;
   setBlackList(args: { blackListOfPackages?: string[]
     , blackListOfText?: Array<{ rule: 'contains' | 'startsWith' | 'exact', value: string }> }): Promise<void>;
 }
@@ -84,14 +85,24 @@ export class SystemNotificationListener {
   requestPermission() : Promise<void> {
     return NotificationListenerPlugin.requestPermission();
   }
-  isListening () : Promise<boolean> {
+  isListening() : Promise<boolean> {
     return new Promise<boolean>((resolve : any, reject : any) => {
       NotificationListenerPlugin.isListening().then((value : {value : boolean}) => {
         resolve(value.value);
       }).catch((reason : any) => {
         reject(reason);
       });
-    })
+    });
+  }
+
+  hasPermission(): Promise<boolean> {
+    return new Promise<boolean>((resolve : any, reject : any) => {
+      NotificationListenerPlugin.hasPermission().then((value : {value : boolean}) => {
+        resolve(value.value);
+      }).catch((reason : any) => {
+        reject(reason);
+      });
+    });
   }
 
   setBlackList(args: { blackListOfPackages?: string[]

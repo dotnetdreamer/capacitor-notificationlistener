@@ -2,6 +2,7 @@ package ch.asinz.capacitornotificationlistener;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -48,6 +49,18 @@ public class NotificationListenerPlugin extends Plugin {
         filter.addAction(NotificationService.ACTION_REMOVE);
         getContext().registerReceiver(notificationreceiver, filter);
         call.success();
+    }
+
+
+    @PluginMethod
+    public void hasPermission(PluginCall call) {
+        ComponentName cn = new ComponentName(getContext(), NotificationService.class);
+        String flat = Settings.Secure.getString(getContext().getContentResolver()
+            , "enabled_notification_listeners");
+        final boolean enabled = flat != null && flat.contains(cn.flattenToString());
+        JSObject ret = new JSObject();
+        ret.put("value",  enabled);
+        call.resolve(ret);
     }
 
     @PluginMethod
