@@ -97,13 +97,14 @@ public class NotificationService extends NotificationListenerService {
                     JSONObject item = NotificationService.blackListOfText.getJSONObject(j);
                     String rule = item.getString("rule");
                     String value = item.getString("value");
-                    if(rule.equals("contains") && txtStr.contains(value)) {
+                    String appPackage = item.getString("package");
+                    if(rule.equals("contains") && txtStr.contains(value) && appPackage.equals(pkg)) {
                         found = true;
                         break;
-                    } else if(rule.equals("startsWith") && txtStr.contains(value)) {
+                    } else if(rule.equals("startsWith") && txtStr.contains(value) && appPackage.equals(pkg)) {
                         found = true;
                         break;
-                    } else if(rule.equals("exact") && txtStr.contains(value)) {
+                    } else if(rule.equals("exact") && txtStr.contains(value) && appPackage.equals(pkg)) {
                         found = true;
                         break;
                     }

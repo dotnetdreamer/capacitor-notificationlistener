@@ -39,7 +39,7 @@ interface NotificationListenerPluginPlugin extends Plugin {
   isListening(): Promise<{ value: boolean }>;
   hasPermission(): Promise<{ value: boolean }>;
   setBlackList(args: { blackListOfPackages?: string[]
-    , blackListOfText?: Array<{ rule: 'contains' | 'startsWith' | 'exact', value: string }> }): Promise<void>;
+    , blackListOfText?: Array<{ rule: 'contains' | 'startsWith' | 'exact', value: string, package: string }> }): Promise<void>;
 }
 
 // ----- 
@@ -106,7 +106,7 @@ export class SystemNotificationListener {
   }
 
   setBlackList(args: { blackListOfPackages?: string[]
-    , blackListOfText?: Array<{ rule: 'contains' | 'startsWith' | 'exact', value: string }> })
+    , blackListOfText?: Array<{ rule: 'contains' | 'startsWith' | 'exact', value: string, package: string }> })
     : Promise<void> {
       return NotificationListenerPlugin.setBlackList(args);
   }
