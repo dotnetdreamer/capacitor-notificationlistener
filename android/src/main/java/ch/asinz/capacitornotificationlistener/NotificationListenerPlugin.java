@@ -43,11 +43,20 @@ public class NotificationListenerPlugin extends Plugin {
             Log.d(TAG, "NotificationReceiver already exists");
             return;
         }
+        Log.d(TAG, "NotificationReceiver Registered: 1");
+
         notificationreceiver = new NotificationReceiver();
+        Log.d(TAG, "NotificationReceiver Registered: 2");
+
         IntentFilter filter = new IntentFilter();
         filter.addAction(NotificationService.ACTION_RECEIVE);
+        Log.d(TAG, "NotificationReceiver Registered: 3");
+
         filter.addAction(NotificationService.ACTION_REMOVE);
+        Log.d(TAG, "NotificationReceiver Registered: 4");
+
         getContext().registerReceiver(notificationreceiver, filter);
+        Log.d(TAG, "NotificationReceiver Registered");
         call.success();
     }
 
@@ -117,12 +126,16 @@ public class NotificationListenerPlugin extends Plugin {
 
     private class NotificationReceiver extends BroadcastReceiver {
         NotificationReceiver() {
+            Log.d(TAG, "NotificationReceiver: NotificationReceiver constructor");
+
             NotificationService.blackListOfText = null;
             NotificationService.blackListOfPackages = null;
         }
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "NotificationReceiver: onReceive");
+
             JSObject jo = new JSObject();
             try {
                 jo.put("key", intent.getStringExtra(NotificationService.ARG_KEY));
@@ -139,6 +152,8 @@ public class NotificationListenerPlugin extends Plugin {
                 Log.e(TAG, "JSObject Error");
                 return;
             }
+            Log.d(TAG, "NotificationReceiver: package:" + intent.getStringExtra(NotificationService.ARG_PACKAGE));
+
             switch (intent.getAction()){
                 case NotificationService.ACTION_RECEIVE:
                     notifyListeners(EVENT_NOTIFICATION_RECEIVED, jo);

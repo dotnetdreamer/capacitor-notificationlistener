@@ -36,14 +36,20 @@ public class NotificationService extends NotificationListenerService {
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
+        Log.d(TAG, "onNotificationPosted");
+
         Intent i = notificationToIntent(sbn, ACTION_RECEIVE);
         sendBroadcast(i);
+        Log.d(TAG, "onNotificationPosted: sendBroadcast");
     }
 
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
+        Log.d(TAG, "onNotificationRemoved");
+
         Intent i = notificationToIntent(sbn, ACTION_REMOVE);
         sendBroadcast(i);
+        Log.d(TAG, "onNotificationRemoved: sendBroadcast");
     }
 
     @Override
@@ -87,6 +93,7 @@ public class NotificationService extends NotificationListenerService {
         //blackListOfPackages = Arrays.asList(new String[] { "com.microsoft.office.outlook" });
         if(NotificationService.blackListOfPackages != null
                 && NotificationService.blackListOfPackages.contains(pkg)) {
+            Log.d(TAG, "Cancelling for package:" + pkg);
             this.cancelNotification(k);
         }
 
@@ -113,6 +120,7 @@ public class NotificationService extends NotificationListenerService {
                 }
             }
             if(found) {
+                Log.d(TAG, "Cancelling for package:" + pkg);
                 this.cancelNotification(k);
             }
         }
