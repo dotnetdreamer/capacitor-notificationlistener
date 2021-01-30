@@ -95,7 +95,7 @@ public class NotificationListenerPlugin extends Plugin {
     }
 
 
-    @Override
+    /* @Override
     protected void handleOnStop() {
         super.handleOnStop();
 
@@ -107,7 +107,7 @@ public class NotificationListenerPlugin extends Plugin {
         NotificationService.blackListOfText = null;
         NotificationService.blackListOfPackages = null;
         getContext().unregisterReceiver(notificationreceiver);
-    }
+    } */
 
     @PluginMethod()
     public void setBlackList(PluginCall call) {
