@@ -43,18 +43,14 @@ public class NotificationListenerPlugin extends Plugin {
             Log.d(TAG, "NotificationReceiver already exists");
             return;
         }
-        Log.d(TAG, "NotificationReceiver Registered: 1");
-
+        Log.d(TAG, "NotificationReceiver NotificationReceiver()");
         notificationreceiver = new NotificationReceiver();
-        Log.d(TAG, "NotificationReceiver Registered: 2");
-
+        Log.d(TAG, "NotificationReceiver IntentFilter()");
         IntentFilter filter = new IntentFilter();
         filter.addAction(NotificationService.ACTION_RECEIVE);
-        Log.d(TAG, "NotificationReceiver Registered: 3");
-
+        Log.d(TAG, "NotificationReceiver ACTION_REMOVE");
         filter.addAction(NotificationService.ACTION_REMOVE);
-        Log.d(TAG, "NotificationReceiver Registered: 4");
-
+        Log.d(TAG, "NotificationReceiver registerReceiver()");
         getContext().registerReceiver(notificationreceiver, filter);
         Log.d(TAG, "NotificationReceiver Registered");
         call.success();
@@ -96,6 +92,21 @@ public class NotificationListenerPlugin extends Plugin {
         }
         getContext().unregisterReceiver(notificationreceiver);
         call.success();
+    }
+
+
+    @Override
+    protected void handleOnStop() {
+        super.handleOnStop();
+
+        Log.d(TAG, "handleOnStop");
+        if (notificationreceiver == null) {
+            return;
+        }
+
+        NotificationService.blackListOfText = null;
+        NotificationService.blackListOfPackages = null;
+        getContext().unregisterReceiver(notificationreceiver);
     }
 
     @PluginMethod()
