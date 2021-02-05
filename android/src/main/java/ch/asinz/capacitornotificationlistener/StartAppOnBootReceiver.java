@@ -1,6 +1,5 @@
 package ch.asinz.capacitornotificationlistener;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,11 +21,23 @@ public class StartAppOnBootReceiver extends BroadcastReceiver {
          String packageName = context.getPackageName();
          Log.d(TAG, "Launching Application: " + packageName);
 
-
          try {
-            Intent i = context.getPackageManager().getLaunchIntentForPackage(packageName);
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(i);
+            //if there is lock screen, the app won't start when ACTION_LOCKED_BOOT_COMPLETED is received...
+            try {
+               Intent i = context.getPackageManager().getLaunchIntentForPackage(packageName);
+               if(i == null) {
+                  Toast.makeText(context, "Couldn't launch app. Inten is null", Toast.LENGTH_LONG).show();
+                  return;
+               }
+
+               i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+               context.startActivity(i);
+
+               Toast.makeText(context, packageName + " started", Toast.LENGTH_LONG).show();
+            } catch (Exception ex) {
+               //can fail e.g if device has a lock screen. So ignore as it will be tried again by ACTION_BOOT_COMPLETED
+               Log.e(TAG, ex.getLocalizedMessage(), ex);
+            }
 
             //move app to background
             /*
@@ -38,7 +49,7 @@ public class StartAppOnBootReceiver extends BroadcastReceiver {
                //activity.moveTaskToBack(true);
              */
          } catch (Exception ex) {
-            Toast.makeText(context, "Couldn't move app to background " + ex.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(context, ex.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             Log.e(TAG, ex.getLocalizedMessage(), ex);
          }
       }
