@@ -40,6 +40,9 @@ interface NotificationListenerPluginPlugin extends Plugin {
   hasPermission(): Promise<{ value: boolean }>;
   setBlackList(args: { blackListOfPackages?: string[]
     , blackListOfText?: Array<{ rule: 'contains' | 'startsWith' | 'exact', value: string, package: string }> }): Promise<void>;
+
+  hasSystemAlertWindowPermission(): Promise<{ value: boolean }>;
+  requestSystemAlertWindowPermission(): Promise<void>;
 }
 
 // ----- 
@@ -109,5 +112,19 @@ export class SystemNotificationListener {
     , blackListOfText?: Array<{ rule: 'contains' | 'startsWith' | 'exact', value: string, package: string }> })
     : Promise<void> {
       return NotificationListenerPlugin.setBlackList(args);
+  }
+
+  hasSystemAlertWindowPermission(): Promise<boolean> {
+    return new Promise<boolean>((resolve : any, reject : any) => {
+      NotificationListenerPlugin.hasSystemAlertWindowPermission().then((value : {value : boolean}) => {
+        resolve(value.value);
+      }).catch((reason : any) => {
+        reject(reason);
+      });
+    });
+  }
+
+  requestSystemAlertWindowPermission() : Promise<void> {
+    return NotificationListenerPlugin.requestSystemAlertWindowPermission();
   }
 }

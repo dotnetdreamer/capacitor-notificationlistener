@@ -6,6 +6,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.provider.Settings;
 import android.util.Log;
 
@@ -71,6 +73,31 @@ public class NotificationListenerPlugin extends Plugin {
     @PluginMethod
     public void requestPermission(PluginCall call) {
         startActivityForResult(call, new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS), 0);
+        call.success();
+    }
+
+    @PluginMethod
+    public void hasSystemAlertWindowPermission(PluginCall call) {
+        Context ctx = getContext();
+        boolean enabled = true;
+        if (android.os.Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(ctx)) {   //Android M Or Over
+            enabled = false;
+        }
+
+        JSObject ret = new JSObject();
+        ret.put("value",  enabled);
+        call.resolve(ret);
+    }
+
+    @PluginMethod
+    public void requestSystemAlertWindowPermission(PluginCall call) {
+        Context ctx = getContext();
+        if (android.os.Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(ctx)) {   //Android M Or Over
+            String packageName = ctx.getPackageName();
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + packageName));
+            startActivityForResult(call, intent, 0);
+        }
+
         call.success();
     }
 
