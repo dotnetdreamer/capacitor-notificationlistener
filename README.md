@@ -14,6 +14,11 @@ Register this plugin using  ```add(NotificationListenerPlugin.class)``` in your 
 ### Permissions
 Add the following to your AndroidManifest.xml:
 
+```
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+```
+
 ```xml
 <service android:name="ch.asinz.capacitornotificationlistener.NotificationService"
     android:label="@string/app_name"
@@ -22,6 +27,16 @@ Add the following to your AndroidManifest.xml:
         <action android:name="android.service.notification.NotificationListenerService" />
     </intent-filter>
 </service>
+
+<!-- https://developer.android.com/training/articles/direct-boot (LOCKED_BOOT_COMPLETED) is required if devices has lock on-->
+<receiver android:directBootAware="true"
+    android:name="ch.asinz.capacitornotificationlistener.StartAppOnBootReceiver">
+    <intent-filter>
+        <action android:name="android.intent.action.BOOT" />
+        <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+        <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+    </intent-filter>
+</receiver>
 ```
 
 ## Usage 
