@@ -26,7 +26,7 @@ public class StartAppOnBootReceiver extends BroadcastReceiver {
             try {
                Intent i = context.getPackageManager().getLaunchIntentForPackage(packageName);
                if(i == null) {
-                  Toast.makeText(context, "Couldn't launch app. Inten is null", Toast.LENGTH_LONG).show();
+                  Toast.makeText(context, "Couldn't launch app. Intent is null", Toast.LENGTH_LONG).show();
                   return;
                }
 
